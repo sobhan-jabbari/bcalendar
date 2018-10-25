@@ -1,13 +1,18 @@
 apply plugin: 'com.android.library'
 
+ext {
+    appVersionCode = 101
+    appVersionName = '1.0.1'
+}
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 27
-        versionCode bcalendarVersionCode
-        versionName bcalendarVersionName
+        targetSdkVersion 28
+        versionCode appVersionCode
+        versionName appVersionName
     }
 
     buildTypes {
@@ -42,7 +47,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
 }
 
 apply from: 'publish.gradle'

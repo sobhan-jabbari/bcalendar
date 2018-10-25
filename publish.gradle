@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 
-version bcalendarVersionName
+version appVersionName
 group 'ir.afraapps'
 
 ext {
