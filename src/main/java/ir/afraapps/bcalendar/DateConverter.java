@@ -20,10 +20,12 @@ public final class DateConverter {
     354, // 1437
     354, // 1438
     354, // 1439
-    354, // 1440
+    355, // 1440
+    354, // 1441
   };
 
 
+  // ۱-محرم، ۲-صفر، ۳-ربیع الاول، ۴-ربیع الثانی، ۵-جمادی الاول، ۶-جمادی الثانی، ۷-رجب، ۸-شعبان، ۹-رمضان، ۱۰-شوال، ۱۱-ذی‌قعده، ۱۲-ذی‌حجه
   static {
     monthList.add(new int[]{0, 30, 30, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29});  // 1432
     monthList.add(new int[]{0, 29, 30, 29, 30, 30, 30, 29, 30, 29, 30, 29, 30});  // 1433
@@ -33,7 +35,8 @@ public final class DateConverter {
     monthList.add(new int[]{0, 29, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30, 30});  // 1437
     monthList.add(new int[]{0, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30});  // 1438
     monthList.add(new int[]{0, 29, 30, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29});  // 1439
-    monthList.add(new int[]{0, 30, 29, 30, 30, 30, 29, 29, 30, 29, 29, 30, 29});  // 1440
+    monthList.add(new int[]{0, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29});  // 1440
+    monthList.add(new int[]{0, 29, 30, 29, 30, 30, 29, 29, 30, 30, 29, 30, 29});  // 1441
   }
 
   public static IslamicDate persianToHijriTU(PersianDate persian) {
@@ -69,11 +72,11 @@ public final class DateConverter {
   }
 
   private static boolean matchWithYearsLength(PersianDate persianDate) {
-    return persianDate.getYear() > 1389 && persianDate.getYear() < 1398;
+    return persianDate.getYear() > 1389 && persianDate.getYear() < 1399;
   }
 
   private static boolean matchWithYearsLength(IslamicDate hijri) {
-    return hijri.getYear() > 1431 && hijri.getYear() < 1441;
+    return hijri.getYear() > 1431 && hijri.getYear() < 1442;
   }
 
   public static PersianDate hijriToPersian(IslamicDate hijri) {
@@ -229,13 +232,13 @@ public final class DateConverter {
   }
 
 
-  public static int lipYearsCount(PersianDate persian) {
-    int baseYear = 1390;
-    int diffYears = persian.getYear() - baseYear;
+  public static int lipYearsCount(PersianDate fromDate, PersianDate toDate) {
+    int baseYear = fromDate.getYear();
+    int diffYears = toDate.getYear() - baseYear;
     int lipYearCount = 0;
 
     for (int i = 0; i < diffYears; i++) {
-      PersianDate date = new PersianDate(persian.getYear() + i, persian.getMonth(), persian.getDayOfMonth());
+      PersianDate date = new PersianDate(toDate.getYear() + i, toDate.getMonth(), toDate.getDayOfMonth());
       if (date.isLeapYear()) {
         lipYearCount++;
       }
