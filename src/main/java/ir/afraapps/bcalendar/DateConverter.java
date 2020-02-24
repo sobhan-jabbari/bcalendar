@@ -1,6 +1,8 @@
 package ir.afraapps.bcalendar;
 
-import java.util.ArrayList;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
+
 import java.util.Calendar;
 
 
@@ -10,103 +12,177 @@ import java.util.Calendar;
 
 public final class DateConverter {
 
-  private static final ArrayList<int[]> monthList = new ArrayList<>();
-  private static final int[] daysInYear = new int[]{
-    355, // 1432
-    355, // 1433
-    354, // 1434
-    355, // 1435
-    354, // 1436
-    354, // 1437
-    354, // 1438
-    354, // 1439
-    355, // 1440
-    354, // 1441
-  };
+  private static final SparseArray<int[]> hijriMonthsCountMap = new SparseArray();
+  private static final SparseIntArray hijriDaysCountMap = new SparseIntArray();
+  private static final SparseArray<IslamicDate> shamsiHijri = new SparseArray();
+  private static final SparseArray<PersianDate> hijriShamsi = new SparseArray();
 
 
   // ۱-محرم، ۲-صفر، ۳-ربیع الاول، ۴-ربیع الثانی، ۵-جمادی الاول، ۶-جمادی الثانی، ۷-رجب، ۸-شعبان، ۹-رمضان، ۱۰-شوال، ۱۱-ذی‌قعده، ۱۲-ذی‌حجه
   static {
-    monthList.add(new int[]{0, 30, 30, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29});  // 1432
-    monthList.add(new int[]{0, 29, 30, 29, 30, 30, 30, 29, 30, 29, 30, 29, 30});  // 1433
-    monthList.add(new int[]{0, 29, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29});  // 1434
-    monthList.add(new int[]{0, 29, 30, 29, 30, 29, 30, 29, 30, 30, 30, 29, 30});  // 1435
-    monthList.add(new int[]{0, 29, 30, 29, 29, 30, 29, 30, 29, 30, 29, 30, 30});  // 1436
-    monthList.add(new int[]{0, 29, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30, 30});  // 1437
-    monthList.add(new int[]{0, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30});  // 1438
-    monthList.add(new int[]{0, 29, 30, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29});  // 1439
-    monthList.add(new int[]{0, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29});  // 1440
-    monthList.add(new int[]{0, 29, 30, 29, 30, 30, 29, 29, 30, 30, 29, 30, 29});  // 1441
+
+    // year -> monthsCount
+    hijriMonthsCountMap.put(1432, new int[]{0, 30, 30, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29});
+    hijriMonthsCountMap.put(1433, new int[]{0, 29, 30, 29, 30, 30, 30, 29, 30, 29, 30, 29, 30});
+    hijriMonthsCountMap.put(1434, new int[]{0, 29, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29});
+    hijriMonthsCountMap.put(1435, new int[]{0, 29, 30, 29, 30, 29, 30, 29, 30, 30, 30, 29, 30});
+    hijriMonthsCountMap.put(1436, new int[]{0, 29, 30, 29, 29, 30, 29, 30, 29, 30, 29, 30, 30});
+    hijriMonthsCountMap.put(1437, new int[]{0, 29, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30, 30});
+    hijriMonthsCountMap.put(1438, new int[]{0, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30});
+    hijriMonthsCountMap.put(1439, new int[]{0, 29, 30, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29});
+    hijriMonthsCountMap.put(1440, new int[]{0, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29});
+    hijriMonthsCountMap.put(1441, new int[]{0, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30});
+    hijriMonthsCountMap.put(1442, new int[]{0, 29, 29, 30, 29, 30, 29, 30, 30, 30, 29, 30, 29});
+    hijriMonthsCountMap.put(1443, new int[]{0, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30});
+    hijriMonthsCountMap.put(1444, new int[]{0, 29, 30, 29, 30, 30, 29, 29, 30, 29, 30, 29, 30});
+    hijriMonthsCountMap.put(1445, new int[]{0, 29, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29, 30});
+    hijriMonthsCountMap.put(1446, new int[]{0, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29, 29});
+
+    // year -> daysCount
+    hijriDaysCountMap.put(1432, 355);
+    hijriDaysCountMap.put(1433, 355);
+    hijriDaysCountMap.put(1434, 354);
+    hijriDaysCountMap.put(1435, 355);
+    hijriDaysCountMap.put(1436, 354);
+    hijriDaysCountMap.put(1437, 354);
+    hijriDaysCountMap.put(1438, 354);
+    hijriDaysCountMap.put(1439, 354);
+    hijriDaysCountMap.put(1440, 355);
+    hijriDaysCountMap.put(1441, 355);
+    hijriDaysCountMap.put(1442, 354);
+    hijriDaysCountMap.put(1443, 355);
+    hijriDaysCountMap.put(1444, 354);
+    hijriDaysCountMap.put(1445, 354);
+    hijriDaysCountMap.put(1446, 354);
+
+    // year -> islamicDate
+    shamsiHijri.put(1390, new IslamicDate(1432, 4, 16));
+    shamsiHijri.put(1391, new IslamicDate(1433, 4, 27));
+    shamsiHijri.put(1392, new IslamicDate(1434, 5, 9));
+    shamsiHijri.put(1393, new IslamicDate(1435, 5, 19));
+    shamsiHijri.put(1394, new IslamicDate(1436, 5, 30));
+    shamsiHijri.put(1395, new IslamicDate(1437, 6, 10));
+    shamsiHijri.put(1396, new IslamicDate(1438, 6, 22));
+    shamsiHijri.put(1397, new IslamicDate(1439, 7, 3));
+    shamsiHijri.put(1398, new IslamicDate(1440, 7, 14));
+    shamsiHijri.put(1399, new IslamicDate(1441, 7, 25));
+    shamsiHijri.put(1400, new IslamicDate(1442, 8, 7));
+    shamsiHijri.put(1401, new IslamicDate(1443, 8, 17));
+    shamsiHijri.put(1402, new IslamicDate(1444, 8, 28));
+    shamsiHijri.put(1403, new IslamicDate(1445, 9, 9));
+    shamsiHijri.put(1404, new IslamicDate(1446, 9, 20));
+    shamsiHijri.put(1405, new IslamicDate(1447, 10, 1));
+    shamsiHijri.put(1406, new IslamicDate(1448, 10, 12));
+    shamsiHijri.put(1407, new IslamicDate(1449, 10, 23));
+    shamsiHijri.put(1408, new IslamicDate(1450, 11, 4));
+    shamsiHijri.put(1409, new IslamicDate(1451, 11, 16));
+    shamsiHijri.put(1410, new IslamicDate(1452, 11, 26));
+    shamsiHijri.put(1411, new IslamicDate(1453, 12, 7));
+
+    // year -> persianDate
+    hijriShamsi.put(1432, new PersianDate(1389, 9, 16));
+    hijriShamsi.put(1433, new PersianDate(1390, 9, 6));
+    hijriShamsi.put(1434, new PersianDate(1391, 8, 26));
+    hijriShamsi.put(1435, new PersianDate(1392, 8, 14));
+    hijriShamsi.put(1436, new PersianDate(1393, 8, 4));
+    hijriShamsi.put(1437, new PersianDate(1394, 7, 23));
+    hijriShamsi.put(1438, new PersianDate(1395, 7, 12));
+    hijriShamsi.put(1439, new PersianDate(1396, 6, 31));
+    hijriShamsi.put(1440, new PersianDate(1397, 6, 20));
+    hijriShamsi.put(1441, new PersianDate(1398, 6, 10));
+    hijriShamsi.put(1442, new PersianDate(1399, 5, 31));
+    hijriShamsi.put(1443, new PersianDate(1400, 5, 19));
+    hijriShamsi.put(1444, new PersianDate(1401, 5, 9));
+    hijriShamsi.put(1445, new PersianDate(1402, 4, 29));
+    hijriShamsi.put(1446, new PersianDate(1403, 4, 18));
+    hijriShamsi.put(1447, new PersianDate(1404, 4, 6));
+    hijriShamsi.put(1448, new PersianDate(1405, 3, 27));
+    hijriShamsi.put(1449, new PersianDate(1406, 3, 17));
+    hijriShamsi.put(1450, new PersianDate(1407, 3, 6));
+    hijriShamsi.put(1451, new PersianDate(1408, 2, 26));
+    hijriShamsi.put(1452, new PersianDate(1409, 2, 14));
+    hijriShamsi.put(1453, new PersianDate(1410, 2, 4));
   }
 
+
   public static IslamicDate persianToHijriTU(PersianDate persian) {
-    if (persian == null || !matchWithYearsLength(persian))
-      return null;
+    if (persian == null) return null;
 
-    int i = 0;
-    int[] months = getMontDayList(i);
-    int day = getDaysFromBaseDate(persian); // from 1390-1-1 to intern date
-    int month = 4; // month of 1432 in 1390-1-1
-    day += 16; // day of 1432 in 1390-1-1
-    int year = 1432;
+    IslamicDate hijriDate = shamsiHijri.get(persian.getYear());
 
-    while (true) {
+    if (hijriDate == null) return null;
 
-      if (day > months[month]) {
-        day -= months[month];
+    int year = hijriDate.getYear();
+    int month = hijriDate.getMonth();
 
-      } else {
-        break;
-      }
+    int day = getDaysCount(persian);
+
+    if (day == -1) return null;
+
+    int[] months = hijriMonthsCountMap.get(year);
+
+    if (months == null) return null;
+
+    day += hijriDate.getDayOfMonth(); // hijri day of shamsi first day
+
+    int monthDays = months[month];
+
+    while (day > monthDays) {
+      day -= monthDays;
+
       month++;
 
       if (month == 13) {
         year++;
-        i++;
-        months = getMontDayList(i);
-        month = 0;
+        month = 1;
+        months = hijriMonthsCountMap.get(year);
+        if (months == null) return null;
+        monthDays = months[month];
       }
+
     }
 
     return new IslamicDate(year, month, day);
   }
 
-  private static boolean matchWithYearsLength(PersianDate persianDate) {
-    return persianDate.getYear() > 1389 && persianDate.getYear() < 1399;
-  }
-
-  private static boolean matchWithYearsLength(IslamicDate hijri) {
-    return hijri.getYear() > 1431 && hijri.getYear() < 1442;
-  }
 
   public static PersianDate hijriToPersian(IslamicDate hijri) {
-    if (hijri == null || !matchWithYearsLength(hijri))
-      return null;
+    if (hijri == null) return null;
+
+    PersianDate persianDate = hijriShamsi.get(hijri.getYear());
+
+    if (persianDate == null) return null;
+
+    int year = persianDate.getYear();
+    int month = persianDate.getMonth();
+    int day = getDaysCount(hijri);
+
+    if (day == -1) return null;
 
     int[] months = new int[]{0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
 
-    int day = getHijriDaysFromBaseDate(hijri); // from 1432-1-1 to intern date
+    day += persianDate.getDayOfMonth(); // shamsi day of hijri first day
 
-    int month = 9; // month of 1389 in 1432-1-1
-    day += 16; // day of 1389 in 1432-1-1
-    int year = 1389;
 
-    while (true) {
+    int monthDays = months[month];
 
-      if (day > months[month]) {
-        day -= months[month];
-      } else {
-        break;
-      }
+    while (day > monthDays) {
+      day -= monthDays;
+
       month++;
 
       if (month == 13) {
         if (isLipYearInShamsi(year)) {
           day -= 1;
+          if (day <= monthDays) {
+            break;
+          }
         }
         year++;
-        month = 0;
+        month = 1;
+        monthDays = months[month];
       }
+
     }
 
     return new PersianDate(year, month, day);
@@ -123,75 +199,46 @@ public final class DateConverter {
   }
 
 
-  private static int[] getMontDayList(int i) {
-    return monthList.get(i);
-  }
-
-
-  private static int getDaysFromBaseDate(PersianDate persian) {
-    if (persian == null)
-      return 0;
-    int[] monthsList = new int[]{0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
-    int baseYear = 1390;
+  private static int getDaysCount(PersianDate persian) {
+    if (persian == null) return -1;
     int year = persian.getYear();
     int month = persian.getMonth();
     int day = persian.getDayOfMonth();
 
-    int yearDiff = year - baseYear;
+    int[] monthsList = isLipYearInShamsi(year)
+      ? new int[]{0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30}
+      : new int[]{0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
 
-    int resultOfYearDiff = 0;
-    int resultOfMonthsDiff = 0;
-
-    if (yearDiff > 0) {
-      for (int j = 0; j < yearDiff; j++) {
-        resultOfYearDiff += 365;
-
-        if (isLipYearInShamsi(baseYear)) {
-          resultOfYearDiff++;
-        }
-        baseYear++;
-      }
-    }
+    int days = 0;
 
     for (int i = 0; i < month; i++) {
-      resultOfMonthsDiff += monthsList[i];
+      days += monthsList[i];
     }
 
-    return resultOfYearDiff + resultOfMonthsDiff + (day - 1);
+    return days + (day - 1);
+  }
+
+  private static int getDaysCount(IslamicDate islamicDate) {
+    if (islamicDate == null) return -1;
+    int year = islamicDate.getYear();
+    int month = islamicDate.getMonth();
+    int day = islamicDate.getDayOfMonth();
+
+    int[] monthsList = hijriMonthsCountMap.get(year);
+
+    int days = 0;
+
+    for (int i = 0; i < month; i++) {
+      days += monthsList[i];
+    }
+
+    return days + (day - 1);
   }
 
 
-  private static int getHijriDaysFromBaseDate(IslamicDate hijri) {
-    if (hijri == null || !matchWithYearsLength(hijri))
-      return 0;
-
-    int yearDiff = hijri.getYear() - 1432;
-    int yearDiffDays = 0;
-    int month = hijri.getMonth();
-    int monthDiffDays = 0;
-
-    //   yearDiffDays = (int) Math.floor(yearDiff * 354.3670834f);
-
-    if (yearDiff > 0) {
-      for (int j = 0; j < yearDiff; j++) {
-        yearDiffDays += daysInYear[j];
-      }
-    }
-
-    for (int i = 0; i < month; i++) {
-      monthDiffDays += getMontDayList(yearDiff)[i];
-    }
-
-    int dayDiffDays = hijri.getDayOfMonth() - 1;
-
-    return yearDiffDays + monthDiffDays + dayDiffDays;
-  }
-
-
-  public static int getDaysToCustomDate(PersianDate date) {
-    if (date == null)
-      return 0;
-    PersianDate now = civilToPersian(new CivilDate());
+  public static int countDaysToDate(PersianDate date) {
+    if (date == null) return 0;
+    PersianDate now = new PersianDate();
     int[] monthsList = new int[]{0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
     int baseYear = now.getYear();
     int baseMonth = now.getMonth();

@@ -12,16 +12,16 @@ buildscript {
 }
 
 ext {
-    appVersionCode = 115
-    appVersionName = '1.1.5'
+    appVersionCode = 117
+    appVersionName = '1.1.7'
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode appVersionCode
         versionName appVersionName
     }
@@ -57,7 +57,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 }
 
 apply from: 'publish.gradle'
