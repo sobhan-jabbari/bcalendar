@@ -12,8 +12,8 @@ buildscript {
 }
 
 ext {
-    appVersionCode = 117
-    appVersionName = '1.1.7'
+    appVersionCode = 120
+    appVersionName = '1.2.0'
 }
 
 android {
